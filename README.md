@@ -17,7 +17,8 @@ One different thing is that we use different version for "diff-gaussian-rasteriz
 Or you can run below code snippet for installing dependencies.
 
 ```
-pip install -r requirements.txt
+conda env create -f environment.yml
+conda activate gsgan
 
 git clone --recursive https://github.com/ashawkey/diff-gaussian-rasterization
 pip install ./diff-gaussian-rasterization
