@@ -12,7 +12,7 @@ Official pytorch implementation for "Adversarial Generation of Hierarchical Gaus
 ## Environment setting
 We build our code on EG3D (https://github.com/NVlabs/eg3d) and 3D-GS (https://github.com/graphdeco-inria/gaussian-splatting).
 Please dependencies of those two repository to run the codes. \
-One different thing is that we use different version for "diff-gaussian-rasterization" that support depth and alpha rendering in the link "https://github.com/ashawkey/diff-gaussian-rasterization". \
+One different thing is that we use different version for "diff-gaussian-rasterization" that support depth and alpha rendering in the link "https://github.com/ashawkey/diff-gaussian-rasterization".
 
 Or you can run below code snippet for installing dependencies.
 
