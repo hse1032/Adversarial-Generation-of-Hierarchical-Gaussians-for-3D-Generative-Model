@@ -24,7 +24,7 @@ pip install ./diff-gaussian-rasterization
 ```
 
 ## Data preprocessing
-We exatly follow the data-preprocessing of EG3D, so please refer to them (https://github.com/NVlabs/eg3d).
+We exactly follow the data-preprocessing of EG3D, so please refer to them (https://github.com/NVlabs/eg3d).
 
 
 ## Training
