@@ -1,4 +1,4 @@
-# SPDX-FileCopyrightText: Copyright (c) 2021-2022 NVIDIA CORPORATION & AFFILIATES. All rights reserved.
+save_ply# SPDX-FileCopyrightText: Copyright (c) 2021-2022 NVIDIA CORPORATION & AFFILIATES. All rights reserved.
 # SPDX-License-Identifier: LicenseRef-NvidiaProprietary
 #
 # NVIDIA CORPORATION, its affiliates and licensors retain all intellectual
@@ -23,6 +23,8 @@ from training.gaussian3d_splatting.cam_utils import orbit_camera, OrbitCamera
 import numpy as np
 from training.point_generator import LFF, ModulatedFullyConnectedLayer, PointGenerator
 from training.background_network import PointBgGenerator
+from custom_utils import save_ply
+import numpy as np
 
 @persistence.persistent_class
 class GSGenerator(torch.nn.Module):
@@ -426,20 +428,6 @@ def print_stats(_dict):
         if k == "_features_rest":
             continue
         print("{} shape: {}, min: {} max: {}".format(k, _dict[k].shape, _dict[k].min(), _dict[k].max()))
-        
-    
-import numpy as np    
-def sample_pose_from_sphere():
-    min_ver = max(min(-30, -30), -80)
-    max_ver = min(max(30, 30), 80)
-    
-    # render random view
-    ver = np.random.randint(min_ver, max_ver)
-    hor = np.random.randint(-180, 180)
-    radius = 0
-
-    pose = torch.tensor(orbit_camera(ver, hor, 1.0)).to(pose.device)
-    return pose
 
 
 def save_images(rgb_image, depth_image, device=None):
@@ -455,86 +443,6 @@ def save_images(rgb_image, depth_image, device=None):
         temp_depth = depth_image.detach().cpu().numpy()[0]
         temp_depth = (temp_depth - temp_depth.min()) / (temp_depth.max() - temp_depth.min()) * 255
         cv2.imwrite("temp_saves/depth_G_{}_{}.jpg".format(str(depth_image.device), 0), temp_depth.transpose([1, 2, 0])[:, :, ::-1])
-    
-
-def get_scaled_directional_vector_from_quaternion(r, s):
-    # r, s: [B, npoints, c]
-    N, npoints, _ = r.shape
-    r, s = r.reshape([N * npoints, -1]), s.reshape([N * npoints, -1])
-    
-    # Rotation activation (normalize)
-    norm = torch.sqrt(r[:,0]*r[:,0] + r[:,1]*r[:,1] + r[:,2]*r[:,2] + r[:,3]*r[:,3])
-    
-    q = r / norm[:, None]
-
-    # R = torch.zeros((q.size(0), 3, 3), device='cuda')
-    R = torch.zeros((q.size(0), 3, 3), device=r.device)
-
-    r = q[:, 0]
-    x = q[:, 1]
-    y = q[:, 2]
-    z = q[:, 3]
-
-    R[:, 0, 0] = 1 - 2 * (y*y + z*z)
-    R[:, 0, 1] = 2 * (x*y - r*z)
-    R[:, 0, 2] = 2 * (x*z + r*y)
-    R[:, 1, 0] = 2 * (x*y + r*z)
-    R[:, 1, 1] = 1 - 2 * (x*x + z*z)
-    R[:, 1, 2] = 2 * (y*z - r*x)
-    R[:, 2, 0] = 2 * (x*z - r*y)
-    R[:, 2, 1] = 2 * (y*z + r*x)
-    R[:, 2, 2] = 1 - 2 * (x*x + y*y)
-    
-    # Scaling activation (exp)
-    s = torch.exp(s)
-    L = torch.zeros((s.shape[0], 3, 3), dtype=torch.float, device=r.device)
-
-    L[:,0,0] = s[:,0]
-    L[:,1,1] = s[:,1]
-    L[:,2,2] = s[:,2]
-
-    L = R @ L
-    
-    L = L.reshape([N, npoints, 3, 3])
-    return L
-    # x, y, z = L[:, :, 0], L[:, :, 1], L[:, :, 2]
-    # return x, y, z
-    
-    
-import os
-from plyfile import PlyData, PlyElement
-
-def save_ply(xyz, features_dc, features_rest, scale, opacity, rotation, path):
-    os.makedirs(os.path.dirname(path), exist_ok=True)
-
-    l = ['x', 'y', 'z', 'nx', 'ny', 'nz']
-    # All channels except the 3 DC
-    for i in range(features_dc.shape[1]*features_dc.shape[2]):
-        l.append('f_dc_{}'.format(i))
-    for i in range(features_rest.shape[1]*features_rest.shape[2]):
-        l.append('f_rest_{}'.format(i))
-    l.append('opacity')
-    for i in range(scale.shape[1]):
-        l.append('scale_{}'.format(i))
-    for i in range(rotation.shape[1]):
-        l.append('rot_{}'.format(i))
-
-    xyz = xyz.detach().cpu().numpy()
-    normals = np.zeros_like(xyz)
-    f_dc = features_dc.detach().transpose(1, 2).flatten(start_dim=1).contiguous().cpu().numpy()
-    f_rest = features_rest.detach().transpose(1, 2).flatten(start_dim=1).contiguous().cpu().numpy()
-    opacities = opacity.detach().cpu().numpy()
-    scale = scale.detach().cpu().numpy()
-    rotation = rotation.detach().cpu().numpy()
-
-    dtype_full = [(attribute, 'f4') for attribute in l]
-
-    elements = np.empty(xyz.shape[0], dtype=dtype_full)
-    attributes = np.concatenate((xyz, normals, f_dc, opacities, scale, rotation), axis=1)
-    elements[:] = list(map(tuple, attributes))
-    el = PlyElement.describe(elements, 'vertex')
-    PlyData([el]).write(path)
-    
     
 
 def slerp(v0, v1, t):
