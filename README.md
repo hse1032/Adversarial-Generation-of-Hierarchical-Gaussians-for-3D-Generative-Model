@@ -74,6 +74,16 @@ and we provide some visualization parameters in 338-349 lines in "gen_videos_gsp
     }
 ```
 
+## Export ply for interactive viewer
+
+Our generation script outputs the gaussians of the first seed in ply format (.ply), which can be visualized by viewers for gaussian splatting. \
+So if you want to visualize gaussians with an interactive viewer, you can use this ply file.
+
+Below is an example of visualization with web viewer provided in (https://github.com/antimatter15/splat).
+
+![Samples FFHQ-512 and AFHQ-512](assets/viewer_example.png)
+
+
 ## Acknowledgement
 Our code is based on the following repositories. \
 EG3D (https://github.com/NVlabs/eg3d) \
