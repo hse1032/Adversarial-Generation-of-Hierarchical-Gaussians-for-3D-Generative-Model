@@ -24,7 +24,6 @@ import numpy as np
 from training.point_generator import LFF, ModulatedFullyConnectedLayer, PointGenerator
 from training.background_network import PointBgGenerator
 from custom_utils import save_ply
-import numpy as np
 
 @persistence.persistent_class
 class GSGenerator(torch.nn.Module):
