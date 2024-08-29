@@ -24,6 +24,10 @@ git clone --recursive https://github.com/ashawkey/diff-gaussian-rasterization
 pip install ./diff-gaussian-rasterization
 ```
 
+## Pretrained checkpoints
+Pretrained checkpoints are available in Google Drive link (https://drive.google.com/open?id=1S7ct8GGQebBOyjmRvBZW0KkwXBxLsqe6).
+
+
 ## Data preprocessing
 We exactly follow the data-preprocessing of EG3D, so please refer to them (https://github.com/NVlabs/eg3d).
 
