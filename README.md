@@ -9,6 +9,11 @@ Official pytorch implementation for "Adversarial Generation of Hierarchical Gaus
 
 ![Samples FFHQ-512 and AFHQ-512](assets/examples.jpg)
 
+
+### Update logs
+- :star: (24/08/29) We just uploaded the pretrained checkpoints (https://drive.google.com/open?id=1S7ct8GGQebBOyjmRvBZW0KkwXBxLsqe6)!
+
+
 ## Environment setting
 We build our code on EG3D (https://github.com/NVlabs/eg3d) and 3D-GS (https://github.com/graphdeco-inria/gaussian-splatting).
 Please dependencies of those two repository to run the codes. \
