@@ -600,11 +600,11 @@ class PointGenerator(nn.Module):
             pe_dim = 0
             if i > self.upsample_res:
                 # Attention - Upsample - MLP - Output
-                if num_pts_start == 4096 or num_pts_start == 2048:
+                if num_pts_start == init_pts * self.upsample_ratio ** 2: # eq level 3
                     self.ws_stop_res = res_start
                 
                 # Attention layer
-                if num_pts_start <= 4096:
+                if num_pts_start <= init_pts * self.upsample_ratio ** 2: # leq level 3
                     self.blocks[f"block_{i}"].append(AdaEdgeBlock(cur_in, cur_in, k=knn)) # TODO
                     self.num_ws += 1
                 else:
@@ -615,7 +615,7 @@ class PointGenerator(nn.Module):
                 self.blocks[f"block_{i}"].append(PointUpsample_subpixel(in_features=cur_in, out_features=cur_out, pe_dim=pe_dim, \
                                             upsample_ratio=self.upsample_ratio, resolution=pe_res))
 
-                if num_pts_start <= 4096: # leq level 3
+                if num_pts_start <= init_pts * self.upsample_ratio ** 2: # leq level 3
                     self.blocks[f"block_{i}"].append(AdaMLP(width=cur_out))
                     self.num_ws += 1
                 else:
