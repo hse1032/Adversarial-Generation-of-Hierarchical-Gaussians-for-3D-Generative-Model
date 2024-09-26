@@ -1,4 +1,4 @@
-# [Arxiv 2024] Adversarial Generation of Hierarchical Gaussians for 3D Generative Model
+# [NeurIPS 2024] Adversarial Generation of Hierarchical Gaussians for 3D Generative Model
 
 <a href="https://hse1032.github.io/gsgan" target="_blank">[Project page]</a>
 <a href="https://arxiv.org/abs/2406.02968" target="_blank">[Paper]</a>
@@ -11,8 +11,8 @@ Official pytorch implementation for "Adversarial Generation of Hierarchical Gaus
 
 
 ### Update logs
+- 🎆 (24/09/26) We are excited to announce that our paper has been accepted at NeurIPS 2024!
 - :star: (24/08/29) We just uploaded the pretrained checkpoints (https://drive.google.com/open?id=1S7ct8GGQebBOyjmRvBZW0KkwXBxLsqe6)!
-
 
 ## Environment setting
 We build our code on EG3D (https://github.com/NVlabs/eg3d) and 3D-GS (https://github.com/graphdeco-inria/gaussian-splatting).
