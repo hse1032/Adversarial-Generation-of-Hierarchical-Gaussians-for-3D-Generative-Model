@@ -170,48 +170,24 @@ class MiniCam:
         self.znear = znear
         self.zfar = zfar
 
-        # w2c = np.linalg.inv(c2w)
-        
-        # rectify...
-        # w2c[1:3, :3] *= -1
-        # w2c[:3, 3] *= -1
-        
         try:
-            # 
-            # w2c = torch.linalg.inv(c2w)
-            w2c = np.linalg.inv(c2w.cpu().numpy())
+            w2c = torch.linalg.inv(c2w)
         except:
-            # w2c = c2w # when dummy c2w are given
-            w2c = c2w.cpu().numpy() # when dummy c2w are given
+            w2c = c2w.clone() # when dummy c2w are given
         
         # rectify...
         w2c[1:3, :3] *= -1
         w2c[:3, 3] *= -1
-        # mult1 = torch.tensor(
-        #               [[0, 0, 0, 0],
-        #               [1, 1, 1, 0],
-        #               [1, 1, 1, 0],
-        #               [0, 0, 0, 0]]
-        #               )
-        # mult2 = torch.tensor(
-        #               [[0, 0, 0, 1],
-        #               [0, 0, 0, 1],
-        #               [0, 0, 0, 1],
-        #               [0, 0, 0, 0]]
-        #               )
-        # w2c = w2c * -1 * mult1.to(device=w2c.device, dtype=w2c.dtype)
-        # w2c = w2c * -1 * mult2.to(device=w2c.device, dtype=w2c.dtype)
 
-        self.world_view_transform = torch.tensor(w2c).transpose(0, 1)
+        self.world_view_transform = w2c.clone().transpose(0, 1)
         self.projection_matrix = (
             getProjectionMatrix(
                 znear=self.znear, zfar=self.zfar, fovX=self.FoVx, fovY=self.FoVy
             )
             .transpose(0, 1)
-        )
+        ).to(w2c.device)
         self.full_proj_transform = self.world_view_transform @ self.projection_matrix
-        # self.camera_center = -torch.tensor(c2w[:3, 3])
-        self.camera_center = - c2w[:3, 3].clone().detach()
+        self.camera_center = - c2w[:3, 3].clone()
 
         if device is not None:
             self.world_view_transform = self.world_view_transform.to(device)
